@@ -19,6 +19,7 @@ public class AndroidAudioConverter {
 
     private Context context;
     private File audioFile;
+    private File convertedFile;
     private AudioFormat format;
     private IConvertCallback callback;
 
@@ -65,8 +66,13 @@ public class AndroidAudioConverter {
         return new AndroidAudioConverter(context);
     }
 
-    public AndroidAudioConverter setFile(File originalFile) {
-        this.audioFile = originalFile;
+    public AndroidAudioConverter setInputFile(File file) {
+        this.audioFile = file;
+        return this;
+    }
+
+    public AndroidAudioConverter setOutputFile(File file) {
+        this.convertedFile = file;
         return this;
     }
 
@@ -93,8 +99,8 @@ public class AndroidAudioConverter {
             callback.onFailure(new IOException("Can't read the file. Missing permission?"));
             return;
         }
-        final File convertedFile = getConvertedFile(audioFile, format);
-        final String[] cmd = new String[]{"-y", "-i", audioFile.getPath(), convertedFile.getPath()};
+        final File file = convertedFile != null ? convertedFile : getConvertedFile(audioFile, format);
+        final String[] cmd = new String[]{"-y", "-i", audioFile.getPath(), file.getPath()};
         try {
             FFmpeg.getInstance(context).execute(cmd, new FFmpegExecuteResponseHandler() {
                         @Override
@@ -109,7 +115,7 @@ public class AndroidAudioConverter {
 
                         @Override
                         public void onSuccess(String message) {
-                            callback.onSuccess(convertedFile);
+                            callback.onSuccess(file);
                         }
 
                         @Override
