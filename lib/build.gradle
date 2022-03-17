@@ -21,5 +21,3 @@ android {
 dependencies {
     implementation 'com.github.adrielcafe:ffmpeg-android-java:2a627f6ecd@aar'
 }
-
-apply plugin: "com.vanniktech.maven.publish"
